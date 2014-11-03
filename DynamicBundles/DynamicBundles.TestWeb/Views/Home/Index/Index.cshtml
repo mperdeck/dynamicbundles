@@ -1,0 +1,26 @@
+﻿@using DynamicBundles.TestWeb.Helpers
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Home Index</h2>
+
+@Html.Partial("_SharedBox")
+
+<p>
+    abcde
+</p>
+
+@Html.Action("MyChild")
+
+<p>
+    After child
+</p>
+<p>
+    @Html.MyHelper("hello helper")
+</p>
+<p>
+    @Html.Action("MyPerson")
+</p>
+

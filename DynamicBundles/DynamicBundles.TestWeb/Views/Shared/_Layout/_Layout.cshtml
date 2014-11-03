@@ -1,0 +1,25 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+@*   @Styles.Render("~/Content/css")*@
+@*   @Styles.Render(bundlePath)*@
+   @DynamicStylesRender()
+
+
+ @*    @Scripts.Render("~/bundles/modernizr")*@
+</head>
+<body>
+    <p>Main _Layout</p>
+
+    @RenderBody()
+
+@*    @Scripts.Render("~/bundles/jquery")*@
+    @RenderSection("scripts", required: false)
+@*   @Styles.Render("~/Content/css")*@
+@*   @Styles.Render(bundlePath)*@
+   @DynamicStylesRender()
+</body>
+</html>
