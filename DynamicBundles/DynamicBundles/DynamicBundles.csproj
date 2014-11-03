@@ -83,6 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BundleHelper.cs" />
+    <Compile Include="CacheHelper.cs" />
     <Compile Include="DependencyResolver.cs" />
     <Compile Include="DynamicBundlesViewEngine.cs" />
     <Compile Include="HttpContextStore.cs" />

@@ -34,8 +34,6 @@ namespace DynamicBundles
             assetDirectoryList.Add(dirPath);
         }
 
-
-
         /// <summary>
         /// Gets the list of asset directories
         /// </summary>
