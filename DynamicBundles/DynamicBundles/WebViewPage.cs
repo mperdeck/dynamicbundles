@@ -125,6 +125,7 @@ namespace DynamicBundles
         /// <returns></returns>
         public static IHtmlString DynamicBundlesTopRender()
         {
+            return new HtmlString("##############");
             return Styles.Render(HttpContextStore.GetTopBundleNames().ToArray());
         }
 
@@ -135,6 +136,7 @@ namespace DynamicBundles
         /// <returns></returns>
         public static IHtmlString DynamicBundlesBottomRender()
         {
+            return new HtmlString("##############");
             return Styles.Render(HttpContextStore.GetBottomBundleNames().ToArray());
         }
     }

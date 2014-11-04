@@ -30,6 +30,11 @@ namespace DynamicBundles.Models
             //###############
         }
 
+        public void AddFile(string filePath, AssetType assetType)
+        {
+
+        }
+
         /// <summary>
         /// Returns the file list for the given asset type.
         /// </summary>

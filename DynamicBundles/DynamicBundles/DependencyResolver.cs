@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DynamicBundles.Models;
 using System.IO;
+using System.Web;
 
 namespace DynamicBundles
 {
@@ -37,20 +38,66 @@ namespace DynamicBundles
         /// <returns></returns>
         private static FileListsByAssetType GetRequiredFilesForDirectoryUnchached(string dirPath)
         {
+            string absoluteDirPath = VirtualPathUtility.ToAbsolute(dirPath);
 
+            IEnumerable<string> filePaths = Directory.EnumerateFiles(absoluteDirPath);
+            FileListsByAssetType fileListsByAssetType = new FileListsByAssetType();
 
-                    Dim dependenciesFilePaths As IEnumerable(Of String) = Directory.EnumerateFiles(componentDirectory, dependencyFileWildcard)
+            foreach(string filePath in filePaths)
+            {
+                AssetType? assetType = AssetTypeOfFile(filePath);
+                if (assetType != null)
+                {
+                    fileListsByAssetType.AddFile(AbsolutePathToApplicationRelativeUrl(filePath), assetType.Value);
+                }
+            }
 
+            return fileListsByAssetType;
+        }
 
+        /// <summary>
+        /// Takes a file path, and returns the asset type of that file.
+        /// If there is no known asset type for the file, returns null.
+        /// </summary>
+        /// <param name="extension"></param>
+        /// <returns></returns>
+        private static AssetType? AssetTypeOfFile(string filePath)
+        {
+            string extension = Path.GetExtension(filePath).ToLower();
 
+            switch (extension)
+            {
+                case ".js":
+                    return AssetType.Script;
 
+                case ".css":
+                    return AssetType.StyleSheet;
 
+                default:
+                    return null;
+            }
+        }
 
+        /// <summary>
+        /// Converts a absolute file name (c:\...) to application relative url (~/....).
+        /// This method won't work if the path to be converted is part of a virtual directory
+        /// </summary>
+        /// <param name="absolutePaths"></param>
+        /// <returns></returns>
+        /// <remarks></remarks>
+        private static string AbsolutePathToApplicationRelativeUrl(string absolutePath)
+        {
+            var request = HttpContext.Current.Request;
+            string applicationPath = request.PhysicalApplicationPath;
+            string virtualDir = request.ApplicationPath;
 
+            if (virtualDir != "/") 
+            {
+                virtualDir = virtualDir + "/";
+            }
 
-
-
-            return null;
+            var applicationRelativeUrl = "~/" + absolutePath.Replace(applicationPath, "").Replace(@"\", @"/");
+            return applicationRelativeUrl;
         }
     }
 }

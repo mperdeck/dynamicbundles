@@ -1,12 +1,16 @@
-﻿<!DOCTYPE html>
-<html>
+﻿@{
+    Layout = "../_LayoutContainer/_LayoutContainer.cshtml";
+}
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <title>@ViewBag.Title</title>
 @*   @Styles.Render("~/Content/css")*@
 @*   @Styles.Render(bundlePath)*@
-   @DynamicStylesRender()
+
+    @*@@@@@@@@@@@@@@@@@*@
+@*   @DynamicBundlesTopRender()*@
 
 
  @*    @Scripts.Render("~/bundles/modernizr")*@
@@ -14,12 +18,20 @@
 <body>
     <p>Main _Layout</p>
 
+
+    
+@Html.Partial("_SharedBox2")
+
+
+    <hr />
     @RenderBody()
 
 @*    @Scripts.Render("~/bundles/jquery")*@
     @RenderSection("scripts", required: false)
 @*   @Styles.Render("~/Content/css")*@
 @*   @Styles.Render(bundlePath)*@
-   @DynamicStylesRender()
+
+
+
+@*   @DynamicBundlesBottomRender()*@
 </body>
-</html>
