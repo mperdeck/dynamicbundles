@@ -106,7 +106,7 @@ namespace DynamicBundles
 
         private static List<string> CreateBundles(FileListsByAssetType fileListsByAssetType, AssetType assetType, Func<string, Bundle> bundleFactory)
         {
-            List<String> styleSheetFiles = fileListsByAssetType.GetFilesList(AssetType.StyleSheet);
+            List<String> styleSheetFiles = fileListsByAssetType.GetList(AssetType.StyleSheet);
             List<List<string>> styleSheetFilesByAreaController = RouteHelper.FilePathsSortedByRoute(styleSheetFiles);
             List<string> bundleVirtualPaths = BundleHelper.AddFileListsAsBundles(BundleTable.Bundles, styleSheetFilesByAreaController, bundleFactory);
             return bundleVirtualPaths;

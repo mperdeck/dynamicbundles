@@ -48,7 +48,7 @@ namespace DynamicBundles
                 AssetType? assetType = AssetTypeOfFile(filePath);
                 if (assetType != null)
                 {
-                    fileListsByAssetType.AddFile(AbsolutePathToApplicationRelativeUrl(filePath), assetType.Value);
+                    fileListsByAssetType.Add(AbsolutePathToApplicationRelativeUrl(filePath), assetType.Value);
                 }
             }
 

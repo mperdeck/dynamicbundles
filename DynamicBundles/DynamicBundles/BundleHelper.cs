@@ -12,7 +12,9 @@ namespace DynamicBundles
         /// <summary>
         /// Takes a list of lists of file paths. Each file path is root relative (starts with ~).
         /// Turns these lists of paths into bundles. Ensures each file path is added only once.
-        /// Adds the bundles to the given bundle collection, but only if there is no bundle yet with the same files.
+        /// 
+        /// Adds the bundles to the given bundle collection, but only if there is no bundle yet with the same files,
+        /// regardless of the order of the files or casing. That is, (a.css, b.css) is regarded as the same as (B.css, a.css).
         /// Returns a list with the bundle paths, in the same order as the originating lists
         /// in the input list of lists.
         /// </summary>
@@ -26,8 +28,26 @@ namespace DynamicBundles
                                                     List<List<string>> fileLists,
                                                     Func<string, Bundle> bundleFactory)
         {
-            //#########################
-            return null;
+            var bundleNames = new List<string>(); 
+            foreach (List<string> fileList in fileLists)
+            {
+                // You can optimise things by doing the deduping inside HashCodeForList, because that
+                // represents the strings as integers (hash codes), which are faster to dedupe.
+
+                List<string> dedupedFilesList = fileList.Distinct().ToList();
+                string listHashCode = StringListHelper.HashCodeForList(dedupedFilesList);
+                string bundleName = "~/" + listHashCode;
+
+                if (bundles.GetBundleFor(bundleName) == null)
+                {
+                    Bundle newBundle = bundleFactory(bundleName);
+                    newBundle.Include(dedupedFilesList.ToArray());
+                    bundles.Add(newBundle);
+                    bundleNames.Add(bundleName);
+                }
+            }
+
+            return bundleNames;
         }
 
         public static ScriptBundle ScriptBundleFactory(string bundleVirtualPath)
