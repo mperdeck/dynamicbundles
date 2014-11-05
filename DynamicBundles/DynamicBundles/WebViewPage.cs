@@ -83,32 +83,13 @@ namespace DynamicBundles
         /// </summary>
         public static void ExecutePageHierarchy()
         {
-            if (!HttpContextStore.FirstTime()) { return; }
-
-            List<string> assetDirectoryList = HttpContextStore.GetAssetDirectories();
-
-            var fileListsByAssetType = new FileListsByAssetType();
-
-            foreach (string assetDirectory in assetDirectoryList)
-            {
-                FileListsByAssetType requiredFilesByAssetType = DependencyResolver.GetRequiredFilesForDirectory(assetDirectory);
-                fileListsByAssetType.Append(requiredFilesByAssetType);
-            }
-
-            // fileListsByAssetType now contains all required files by asset type
-
-            List<string> styleBundleVirtualPaths = CreateBundles(fileListsByAssetType, AssetType.StyleSheet, BundleHelper.StyleBundleFactory);
-            HttpContextStore.StoreBottomBundleNames(styleBundleVirtualPaths);
-
-            List<string> scriptBundleVirtualPaths = CreateBundles(fileListsByAssetType, AssetType.Script, BundleHelper.ScriptBundleFactory);
-            HttpContextStore.StoreTopBundleNames(scriptBundleVirtualPaths);
         }
 
         private static List<string> CreateBundles(FileListsByAssetType fileListsByAssetType, AssetType assetType, Func<string, Bundle> bundleFactory)
         {
-            List<String> styleSheetFiles = fileListsByAssetType.GetList(AssetType.StyleSheet);
-            List<List<string>> styleSheetFilesByAreaController = RouteHelper.FilePathsSortedByRoute(styleSheetFiles);
-            List<string> bundleVirtualPaths = BundleHelper.AddFileListsAsBundles(BundleTable.Bundles, styleSheetFilesByAreaController, bundleFactory);
+            List<String> files = fileListsByAssetType.GetList(AssetType.StyleSheet);
+            List<List<string>> filesByAreaController = RouteHelper.FilePathsSortedByRoute(files);
+            List<string> bundleVirtualPaths = BundleHelper.AddFileListsAsBundles(BundleTable.Bundles, filesByAreaController, bundleFactory);
             return bundleVirtualPaths;
         }
 
@@ -123,10 +104,33 @@ namespace DynamicBundles
         /// near the top (mainly style bundles).
         /// </summary>
         /// <returns></returns>
+        /// <remarks>
+        /// When this method is called, you have to add any bundles that need to be added,
+        /// so the ones that need to be rendered at the top of the page can be rendered here.
+        /// That is, when this runs, the time for gathering file dependencies is over and you need to
+        /// process them into bundles.
+        /// </remarks>
         public static IHtmlString DynamicBundlesTopRender()
         {
-            return new HtmlString("##############");
-            return Styles.Render(HttpContextStore.GetTopBundleNames().ToArray());
+            if (!HttpContextStore.FirstTime()) { return new HtmlString(""); }
+
+            List<string> assetDirectoryList = HttpContextStore.GetAssetDirectories();
+
+            var fileListsByAssetType = new FileListsByAssetType();
+
+            foreach (string assetDirectory in assetDirectoryList)
+            {
+                FileListsByAssetType requiredFilesByAssetType = DependencyResolver.GetRequiredFilesForDirectory(assetDirectory);
+                fileListsByAssetType.Append(requiredFilesByAssetType);
+            }
+
+            // fileListsByAssetType now contains all required files by asset type
+
+            List<string> scriptBundleVirtualPaths = CreateBundles(fileListsByAssetType, AssetType.Script, BundleHelper.ScriptBundleFactory);
+            HttpContextStore.StoreBottomBundleNames(scriptBundleVirtualPaths);
+
+            List<string> styleBundleVirtualPaths = CreateBundles(fileListsByAssetType, AssetType.StyleSheet, BundleHelper.StyleBundleFactory);
+            return Styles.Render(styleBundleVirtualPaths.ToArray());
         }
 
         /// <summary>
@@ -136,7 +140,6 @@ namespace DynamicBundles
         /// <returns></returns>
         public static IHtmlString DynamicBundlesBottomRender()
         {
-            return new HtmlString("##############");
             return Styles.Render(HttpContextStore.GetBottomBundleNames().ToArray());
         }
     }
