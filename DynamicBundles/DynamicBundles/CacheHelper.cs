@@ -10,7 +10,7 @@ namespace DynamicBundles
 {
     public class CacheHelper
     {
-        private static object lockThis;
+        private static object lockThis = new Object();
 
         /// <summary>
         /// Gets an item from cache. 

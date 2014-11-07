@@ -91,28 +91,29 @@ namespace DynamicBundles
                 throw new Exception(string.Format("FilePathSortKey - filePath {0} does not start with ~/", filePath));
             }
 
-            string dirPath = Path.GetDirectoryName(filePath);
-            string[] dirPathComponents = dirPath.Split(new char[] { '/' });
+       //##############     string dirPath = Path.GetDirectoryName(filePath);
+            string[] filePathComponents = filePath.Split(new char[] { '/' });
 
-            // Note that the first element in dirPathComponents will be the ~
+            // Note that the first element in filePathComponents will be the ~
+            // The last element is the file name itself.
 
             string area = "@";
-            int nbrComponents = dirPathComponents.Length;
+            int nbrComponents = filePathComponents.Length;
             int controllerIdx = 2;
 
-            if (string.CompareOrdinal(dirPathComponents[1], "Areas") == 0)
+            if (string.CompareOrdinal(filePathComponents[1], "Areas") == 0)
             {
-                if ((nbrComponents < 5) || (string.CompareOrdinal(dirPathComponents[3], "Views") != 0))
+                if ((nbrComponents < 6) || (string.CompareOrdinal(filePathComponents[3], "Views") != 0))
                 {
                     return "@";
                 }
 
-                area = dirPathComponents[2];
+                area = filePathComponents[2];
                 controllerIdx = 4;
             }
-            else if (string.CompareOrdinal(dirPathComponents[1], "Views") == 0)
+            else if (string.CompareOrdinal(filePathComponents[1], "Views") == 0)
             {
-                if (nbrComponents < 3)
+                if (nbrComponents < 4)
                 {
                     return "@";
                 }
@@ -122,7 +123,7 @@ namespace DynamicBundles
                 return "@";
             }
 
-            string controller = dirPathComponents[controllerIdx];
+            string controller = filePathComponents[controllerIdx];
             if (string.CompareOrdinal(controller, "Shared") == 0)
             {
                 controller = "@";
@@ -132,7 +133,7 @@ namespace DynamicBundles
             int postControllerDirectoryIdx = (controllerIdx + 1);
             if (nbrComponents > postControllerDirectoryIdx)
             {
-                string postControllerDirectory = dirPathComponents[postControllerDirectoryIdx];
+                string postControllerDirectory = filePathComponents[postControllerDirectoryIdx];
                 if (postControllerDirectory.ToLower().StartsWith("_layout"))
                 {
                     postfix = "";

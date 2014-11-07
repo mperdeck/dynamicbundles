@@ -64,7 +64,7 @@ namespace DynamicBundles
 
             HttpContext.Current.Items[FirstTimeItemKey] = true;
 
-            return false;
+            return true;
         }
 
         /// <summary>

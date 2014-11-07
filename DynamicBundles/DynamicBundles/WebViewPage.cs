@@ -87,7 +87,7 @@ namespace DynamicBundles
 
         private static List<string> CreateBundles(FileListsByAssetType fileListsByAssetType, AssetType assetType, Func<string, Bundle> bundleFactory)
         {
-            List<String> files = fileListsByAssetType.GetList(AssetType.StyleSheet);
+            List<String> files = fileListsByAssetType.GetList(assetType);
             List<List<string>> filesByAreaController = RouteHelper.FilePathsSortedByRoute(files);
             List<string> bundleVirtualPaths = BundleHelper.AddFileListsAsBundles(BundleTable.Bundles, filesByAreaController, bundleFactory);
             return bundleVirtualPaths;
@@ -129,6 +129,7 @@ namespace DynamicBundles
             List<string> scriptBundleVirtualPaths = CreateBundles(fileListsByAssetType, AssetType.Script, BundleHelper.ScriptBundleFactory);
             HttpContextStore.StoreBottomBundleNames(scriptBundleVirtualPaths);
 
+            // Note that Styles.Render assumes that all the bundles are StyleBundles
             List<string> styleBundleVirtualPaths = CreateBundles(fileListsByAssetType, AssetType.StyleSheet, BundleHelper.StyleBundleFactory);
             return Styles.Render(styleBundleVirtualPaths.ToArray());
         }
@@ -140,7 +141,8 @@ namespace DynamicBundles
         /// <returns></returns>
         public static IHtmlString DynamicBundlesBottomRender()
         {
-            return Styles.Render(HttpContextStore.GetBottomBundleNames().ToArray());
+            // Note that this assumes that all the bundles are ScriptBundles
+            return Scripts.Render(HttpContextStore.GetBottomBundleNames().ToArray());
         }
     }
 }

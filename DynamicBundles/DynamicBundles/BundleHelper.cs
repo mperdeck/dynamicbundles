@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Optimization;
+using BundleTransformer.Core.Transformers;
 
 namespace DynamicBundles
 {
@@ -31,18 +32,23 @@ namespace DynamicBundles
             var bundleNames = new List<string>(); 
             foreach (List<string> fileList in fileLists)
             {
-                // You can optimise things by doing the deduping inside HashCodeForList, because that
-                // represents the strings as integers (hash codes), which are faster to dedupe.
-
-                List<string> dedupedFilesList = fileList.Distinct().ToList();
-                string listHashCode = StringListHelper.HashCodeForList(dedupedFilesList);
-                string bundleName = "~/" + listHashCode;
-
-                if (bundles.GetBundleFor(bundleName) == null)
+                if (fileList.Count > 0)
                 {
-                    Bundle newBundle = bundleFactory(bundleName);
-                    newBundle.Include(dedupedFilesList.ToArray());
-                    bundles.Add(newBundle);
+
+                    // You can optimise things by doing the deduping inside HashCodeForList, because that
+                    // represents the strings as integers (hash codes), which are faster to dedupe.
+
+                    List<string> dedupedFilesList = fileList.Distinct().ToList();
+                    string listHashCode = StringListHelper.HashCodeForList(dedupedFilesList);
+                    string bundleName = "~/" + listHashCode;
+
+                    if (bundles.GetBundleFor(bundleName) == null)
+                    {
+                        Bundle newBundle = bundleFactory(bundleName);
+                        newBundle.Include(dedupedFilesList.ToArray());
+                        bundles.Add(newBundle);
+                    }
+
                     bundleNames.Add(bundleName);
                 }
             }
@@ -52,6 +58,9 @@ namespace DynamicBundles
 
         public static ScriptBundle ScriptBundleFactory(string bundleVirtualPath)
         {
+            var bundle = new ScriptBundle(bundleVirtualPath);
+            //########## bundle.Transforms.Add(new CssTransformer());
+
             return new ScriptBundle(bundleVirtualPath);
         }
 
