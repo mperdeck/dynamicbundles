@@ -27,7 +27,6 @@ namespace DynamicBundles
         /// </returns>
         public static FileListsByAssetType GetRequiredFilesForDirectory(string dirPath)
         {
-            //###############            string absoluteDirPath = VirtualPathUtility.ToAbsolute(dirPath);
             string absoluteDirPath = HttpContext.Current.Server.MapPath(dirPath);
 
             var fileListsByAssetType = CacheHelper.Get(dirPath, () => GetRequiredFilesForDirectoryUnchached(absoluteDirPath), new[] { absoluteDirPath });

@@ -91,7 +91,6 @@ namespace DynamicBundles
                 throw new Exception(string.Format("FilePathSortKey - filePath {0} does not start with ~/", filePath));
             }
 
-       //##############     string dirPath = Path.GetDirectoryName(filePath);
             string[] filePathComponents = filePath.Split(new char[] { '/' });
 
             // Note that the first element in filePathComponents will be the ~
