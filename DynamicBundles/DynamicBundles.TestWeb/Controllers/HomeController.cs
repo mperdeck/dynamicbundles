@@ -16,6 +16,11 @@ namespace DynamicBundles.TestWeb.Controllers
             return View("Index/Index");
         }
 
+        public ActionResult Product()
+        {
+            return View("Product");
+        }
+
         public ActionResult About()
         {
             return View();

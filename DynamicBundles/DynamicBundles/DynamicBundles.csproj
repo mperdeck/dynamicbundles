@@ -89,6 +89,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssetPath.cs" />
     <Compile Include="BundleHelper.cs" />
     <Compile Include="CacheHelper.cs" />
     <Compile Include="DependencyResolver.cs" />

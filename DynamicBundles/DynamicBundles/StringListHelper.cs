@@ -18,7 +18,7 @@ namespace DynamicBundles
         /// <remarks>
         /// See http://stackoverflow.com/questions/670063/getting-hash-of-a-list-of-strings-regardless-of-order
         /// </remarks>
-        public static string HashCodeForList(List<string> list)
+        public static string HashCodeForList(IEnumerable<string> list)
         {
            List<int> codes = new List<int>();
            foreach (string item in list) 

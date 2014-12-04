@@ -149,10 +149,12 @@
     <Content Include="Areas\TestArea\Views\Shared\_SharedBox3\_SharedBox3.js" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Views\Home\Home.css" />
-    <Content Include="Views\Home\Home.js" />
     <Content Include="Views\Home\Index\Index.css" />
     <Content Include="Views\Home\Index\Index.js" />
+    <Content Include="Views\Home\Home.css" />
+    <Content Include="Views\Home\Home.js" />
+    <Content Include="Views\Home\Product\Product.css" />
+    <Content Include="Views\Home\Product\Product.js" />
     <Content Include="Views\Shared\EditorTemplates\HomeAddress.css" />
     <Content Include="Views\Shared\EditorTemplates\HomeAddress.js" />
     <Content Include="Views\Shared\_LayoutContainer\jquery-1.8.2.js" />
@@ -191,7 +193,7 @@
     <Content Include="Views\Default\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Home\Index\Index.cshtml" />
+    <Content Include="Views\Home\Product\Product.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Shared\_SharedBox\_SharedBox.cshtml" />
@@ -236,6 +238,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\TestArea\Views\Home\MyPerson.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Home\Index\Index.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

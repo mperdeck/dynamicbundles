@@ -31,11 +31,11 @@ namespace DynamicBundles
         /// </summary>
         /// <param name="filePaths"></param>
         /// <returns></returns>
-        public static List<List<string>> FilePathsSortedByRoute(List<string> filePaths)
+        public static List<List<AssetPath>> FilePathsSortedByRoute(List<AssetPath> filePaths)
         {
-            var filePathsBySortKey = new ListsByKey<string, string>();
+            var filePathsBySortKey = new ListsByKey<AssetPath, string>();
 
-            foreach (string filePath in filePaths)
+            foreach (AssetPath filePath in filePaths)
             {
                 filePathsBySortKey.Add(filePath, FilePathSortKey(filePath));
             }
@@ -43,7 +43,7 @@ namespace DynamicBundles
             var sortedListOfLists = filePathsBySortKey.GetListOfLists();
             sortedListOfLists.Sort((firstPair, nextPair) => firstPair.Key.CompareTo(nextPair.Key));
 
-            List<List<string>> result = sortedListOfLists.Select(p=>p.Value).ToList();
+            List<List<AssetPath>> result = sortedListOfLists.Select(p => p.Value).ToList();
             return result;
         }
 
@@ -84,8 +84,10 @@ namespace DynamicBundles
         /// </summary>
         /// <param name="filePath"></param>
         /// <returns></returns>
-        public static string FilePathSortKey(string filePath)
+        public static string FilePathSortKey(AssetPath assetPath)
         {
+            string filePath = assetPath.RootRelativePath;
+
             if (!filePath.StartsWith("~/"))
             {
                 throw new Exception(string.Format("FilePathSortKey - filePath {0} does not start with ~/", filePath));

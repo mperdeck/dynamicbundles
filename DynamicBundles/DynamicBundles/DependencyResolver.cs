@@ -12,7 +12,8 @@ namespace DynamicBundles
     public class DependencyResolver
     {
         /// <summary>
-        /// Takes the path to a directory and returns the files in that directory, and all the files
+        /// Takes the path to a directory and returns the files in that directory, the files in the parent directories (down to the Views or ~ dir), 
+        /// and all the files
         /// that that directory depends on (via .nuspec files).
         /// 
         /// It does not go into sub directories.
@@ -20,42 +21,66 @@ namespace DynamicBundles
         /// Uses caching to reduce trips to the file system.
         /// </summary>
         /// <param name="dirPath">
-        /// Path to the directory. Must be relative to the root of the project (start with a ~).
+        /// Path to the directory. 
         /// </param>
         /// <returns>
         /// The required files, split by asset type.
         /// </returns>
-        public static FileListsByAssetType GetRequiredFilesForDirectory(string dirPath)
+        public static FileListsByAssetType GetRequiredFilesForDirectory(AssetPath dirPath)
         {
-            string absoluteDirPath = HttpContext.Current.Server.MapPath(dirPath);
-
-            var fileListsByAssetType = CacheHelper.Get(dirPath, () => GetRequiredFilesForDirectoryUnchached(absoluteDirPath), new[] { absoluteDirPath });
+            string absolutePath = dirPath.AbsolutePath;
+            var fileListsByAssetType = CacheHelper.Get(absolutePath, () => GetRequiredFilesForDirectoryUnchached(dirPath), new[] { absolutePath });
             return fileListsByAssetType;
         }
 
         /// <summary>
         /// Same as GetRequiredFilesForDirectory, but uncached.
         /// </summary>
-        /// <param name="absoluteDirPath">
-        /// Path to the directory. Unlike GetRequiredFilesForDirectory, must be an absolute file system path.
+        /// <param name="dirPath">
+        /// Path to the directory. 
         /// </param>
         /// <returns></returns>
-        private static FileListsByAssetType GetRequiredFilesForDirectoryUnchached(string absoluteDirPath)
+        private static FileListsByAssetType GetRequiredFilesForDirectoryUnchached(AssetPath dirPath)
         {
-
-            IEnumerable<string> filePaths = Directory.EnumerateFiles(absoluteDirPath);
             FileListsByAssetType fileListsByAssetType = new FileListsByAssetType();
+
+            // Note: parentDirs will contain dirPath itself.
+            //
+            // dirPath.ParentDirs will give you something like
+            /// ~/Views/Shared/EditorTemplates/HomeAddress
+            /// ~/Views/Shared/EditorTemplates
+            /// ~/Views/Shared
+            // However, the longer directory tends to have the more specific files. If there is a dependency between files in these 
+            // directories, it would be from more specific to less specific, not the other way around. So process the directories in
+            // reverse order, so CSS and JS files in more common directories are loaded first.
+
+            IEnumerable<AssetPath> parentDirs = dirPath.ParentDirs("Views").Reverse();
+            foreach (AssetPath parentDir in parentDirs)
+            {
+                AddRequiredFilesSingleDirectory(fileListsByAssetType, parentDir);
+            }
+
+            return fileListsByAssetType;
+        }
+
+        /// <summary>
+        /// Adds all files in a single directory to a fileListsByAssetType
+        /// </summary>
+        /// <param name="fileListsByAssetType"></param>
+        /// <param name="dirPath"></param>
+        private static void AddRequiredFilesSingleDirectory(FileListsByAssetType fileListsByAssetType, AssetPath dirPath)
+        {
+            string absolutePath = dirPath.AbsolutePath;
+            IEnumerable<string> filePaths = Directory.EnumerateFiles(absolutePath);
 
             foreach(string filePath in filePaths)
             {
                 AssetType? assetType = AssetTypeOfFile(filePath);
                 if (assetType != null)
                 {
-                    fileListsByAssetType.Add(AbsolutePathToApplicationRelativeUrl(filePath), assetType.Value);
+                    fileListsByAssetType.Add(dirPath.AbsolutePathToAssetPath(filePath), assetType.Value);
                 }
             }
-
-            return fileListsByAssetType;
         }
 
         /// <summary>
@@ -79,28 +104,6 @@ namespace DynamicBundles
                 default:
                     return null;
             }
-        }
-
-        /// <summary>
-        /// Converts a absolute file name (c:\...) to application relative url (~/....).
-        /// This method won't work if the path to be converted is part of a virtual directory
-        /// </summary>
-        /// <param name="absolutePaths"></param>
-        /// <returns></returns>
-        /// <remarks></remarks>
-        private static string AbsolutePathToApplicationRelativeUrl(string absolutePath)
-        {
-            var request = HttpContext.Current.Request;
-            string applicationPath = request.PhysicalApplicationPath;
-            string virtualDir = request.ApplicationPath;
-
-            if (virtualDir != "/") 
-            {
-                virtualDir = virtualDir + "/";
-            }
-
-            var applicationRelativeUrl = "~/" + absolutePath.Replace(applicationPath, "").Replace(@"\", @"/");
-            return applicationRelativeUrl;
         }
     }
 }

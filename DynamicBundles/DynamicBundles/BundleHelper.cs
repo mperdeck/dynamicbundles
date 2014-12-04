@@ -26,11 +26,11 @@ namespace DynamicBundles
         /// </param>
         /// <returns></returns>
         public static List<string> AddFileListsAsBundles(BundleCollection bundles,
-                                                    List<List<string>> fileLists,
+                                                    List<List<AssetPath>> fileLists,
                                                     Func<string, Bundle> bundleFactory)
         {
-            var bundleNames = new List<string>(); 
-            foreach (List<string> fileList in fileLists)
+            var bundleNames = new List<string>();
+            foreach (List<AssetPath> fileList in fileLists)
             {
                 if (fileList.Count > 0)
                 {
@@ -38,14 +38,15 @@ namespace DynamicBundles
                     // You can optimise things by doing the deduping inside HashCodeForList, because that
                     // represents the strings as integers (hash codes), which are faster to dedupe.
 
-                    List<string> dedupedFilesList = fileList.Distinct().ToList();
-                    string listHashCode = StringListHelper.HashCodeForList(dedupedFilesList);
+                    List<AssetPath> dedupedFilesList = fileList.Distinct().ToList();
+                    string[] dedupedFileRootRelativePaths = dedupedFilesList.Select(f => f.RootRelativePath).ToArray();
+                    string listHashCode = StringListHelper.HashCodeForList(dedupedFileRootRelativePaths);
                     string bundleName = "~/" + listHashCode;
 
                     if (bundles.GetBundleFor(bundleName) == null)
                     {
                         Bundle newBundle = bundleFactory(bundleName);
-                        newBundle.Include(dedupedFilesList.ToArray());
+                        newBundle.Include(dedupedFileRootRelativePaths);
                         bundles.Add(newBundle);
                     }
 

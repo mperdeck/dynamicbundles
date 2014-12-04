@@ -22,12 +22,12 @@ namespace DynamicBundles
         /// Adds a directory with assets (script files, etc.) to the stored list of asset directories.
         /// </summary>
         /// <param name="dirPath"></param>
-        public static void AddAssetDirectory(string dirPath)
+        public static void AddAssetDirectory(AssetPath dirPath)
         {
-            List<string> assetDirectoryList = (List<string>)HttpContext.Current.Items[AssetDirectoryItemKey];
+            List<AssetPath> assetDirectoryList = (List<AssetPath>)HttpContext.Current.Items[AssetDirectoryItemKey];
             if (assetDirectoryList == null)
             {
-                assetDirectoryList = new List<string>();
+                assetDirectoryList = new List<AssetPath>();
                 HttpContext.Current.Items[AssetDirectoryItemKey] = assetDirectoryList;
             }
 
@@ -38,9 +38,9 @@ namespace DynamicBundles
         /// Gets the list of asset directories
         /// </summary>
         /// <returns></returns>
-        public static List<string> GetAssetDirectories()
+        public static List<AssetPath> GetAssetDirectories()
         {
-            List<string> assetDirectoryList = (List<string>)HttpContext.Current.Items[AssetDirectoryItemKey];
+            List<AssetPath> assetDirectoryList = (List<AssetPath>)HttpContext.Current.Items[AssetDirectoryItemKey];
 
             // There should be at least one asset directory - that of the main view.
             if (assetDirectoryList == null)
