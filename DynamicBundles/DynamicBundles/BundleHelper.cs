@@ -8,7 +8,7 @@ using BundleTransformer.Core.Transformers;
 
 namespace DynamicBundles
 {
-    public class BundleHelper
+    internal class BundleHelper
     {
         /// <summary>
         /// Takes a list of lists of file paths. Each file path is root relative (starts with ~).
@@ -25,9 +25,9 @@ namespace DynamicBundles
         /// Used to create a new bundle object.
         /// </param>
         /// <returns></returns>
-        public static List<string> AddFileListsAsBundles(BundleCollection bundles,
+        public static List<string> AddFileListsAsBundles(IDynamicBundleCollection bundles,
                                                     List<List<AssetPath>> fileLists,
-                                                    Func<string, Bundle> bundleFactory)
+                                                    Func<string, string[], Bundle> bundleFactory)
         {
             var bundleNames = new List<string>();
             foreach (List<AssetPath> fileList in fileLists)
@@ -38,15 +38,19 @@ namespace DynamicBundles
                     // You can optimise things by doing the deduping inside HashCodeForList, because that
                     // represents the strings as integers (hash codes), which are faster to dedupe.
 
-                    List<AssetPath> dedupedFilesList = fileList.Distinct().ToList();
-                    string[] dedupedFileRootRelativePaths = dedupedFilesList.Select(f => f.RootRelativePath).ToArray();
+                    IEnumerable<string> filePathsList = fileList.Select(f => f.RootRelativePath);
+
+                    // Reverse the order of the files. Files that have been added later tend to be more generic
+                    // (such as files in _Layout are added before those in _LayoutContainer). This way, files that depend on the 
+                    // more generic files are loaded later.
+                    string[] dedupedFileRootRelativePaths = filePathsList.Distinct().Reverse().ToArray();
+
                     string listHashCode = StringListHelper.HashCodeForList(dedupedFileRootRelativePaths);
                     string bundleName = "~/" + listHashCode;
 
-                    if (bundles.GetBundleFor(bundleName) == null)
+                    if (!bundles.Exists(bundleName))
                     {
-                        Bundle newBundle = bundleFactory(bundleName);
-                        newBundle.Include(dedupedFileRootRelativePaths);
+                        Bundle newBundle = bundleFactory(bundleName, dedupedFileRootRelativePaths);
                         bundles.Add(newBundle);
                     }
 
@@ -55,19 +59,6 @@ namespace DynamicBundles
             }
 
             return bundleNames;
-        }
-
-        public static ScriptBundle ScriptBundleFactory(string bundleVirtualPath)
-        {
-            var bundle = new ScriptBundle(bundleVirtualPath);
-            //########## bundle.Transforms.Add(new CssTransformer());
-
-            return new ScriptBundle(bundleVirtualPath);
-        }
-
-        public static StyleBundle StyleBundleFactory(string bundleVirtualPath)
-        {
-            return new StyleBundle(bundleVirtualPath);
         }
     }
 }

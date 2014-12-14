@@ -56,7 +56,7 @@ namespace DynamicBundles
         /// * files with no Area, with controller Shared, but don't live in a directory with a name starting with _Layout:
         ///   @___@@
         ///   
-        /// * files with an Area, with controller Shared, and that live in a directory with a name starting with _Layout
+        /// * files with an Area, with controller Shared, and that live in a directory with a name starting with _Layout:
         ///   [Area]___@
         ///   
         /// * files with an Area, with controller Shared, but don't live in a directory with a name starting with _Layout:
@@ -134,8 +134,8 @@ namespace DynamicBundles
             int postControllerDirectoryIdx = (controllerIdx + 1);
             if (nbrComponents > postControllerDirectoryIdx)
             {
-                string postControllerDirectory = filePathComponents[postControllerDirectoryIdx];
-                if (postControllerDirectory.ToLower().StartsWith("_layout"))
+                string postControllerDirectory = filePathComponents[postControllerDirectoryIdx].ToLower();
+                if (postControllerDirectory.StartsWith("_layout"))
                 {
                     postfix = "";
                 }

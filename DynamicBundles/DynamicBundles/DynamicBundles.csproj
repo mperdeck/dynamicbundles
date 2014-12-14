@@ -90,11 +90,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssetPath.cs" />
+    <Compile Include="BundleFactories.cs" />
     <Compile Include="BundleHelper.cs" />
     <Compile Include="CacheHelper.cs" />
     <Compile Include="DependencyResolver.cs" />
+    <Compile Include="DynamicBundleCollection.cs" />
+    <Compile Include="DynamicBundlesBuilder.cs" />
     <Compile Include="DynamicBundlesViewEngine.cs" />
     <Compile Include="HttpContextStore.cs" />
+    <Compile Include="NuspecFile.cs" />
     <Compile Include="StringListHelper.cs" />
     <Compile Include="Models\AssetType.cs" />
     <Compile Include="Models\ListsByKey.cs" />

@@ -9,8 +9,20 @@ using System.Web;
 
 namespace DynamicBundles
 {
-    public class DependencyResolver
+    public interface IDependencyResolver
     {
+        FileListsByAssetType GetRequiredFilesForDirectory(AssetPath dirPath);
+    }
+
+    public class DependencyResolver : IDependencyResolver
+    {
+        ICacheHelper _cacheHelper = null;
+
+        public DependencyResolver(ICacheHelper cacheHelper)
+        {
+            _cacheHelper = cacheHelper;
+        }
+
         /// <summary>
         /// Takes the path to a directory and returns the files in that directory, the files in the parent directories (down to the Views or ~ dir), 
         /// and all the files
@@ -26,10 +38,10 @@ namespace DynamicBundles
         /// <returns>
         /// The required files, split by asset type.
         /// </returns>
-        public static FileListsByAssetType GetRequiredFilesForDirectory(AssetPath dirPath)
+        public FileListsByAssetType GetRequiredFilesForDirectory(AssetPath dirPath)
         {
             string absolutePath = dirPath.AbsolutePath;
-            var fileListsByAssetType = CacheHelper.Get(absolutePath, () => GetRequiredFilesForDirectoryUnchached(dirPath), new[] { absolutePath });
+            var fileListsByAssetType = _cacheHelper.Get(absolutePath, () => GetRequiredFilesForDirectoryUnchached(dirPath), new[] { absolutePath });
             return fileListsByAssetType;
         }
 
@@ -40,7 +52,7 @@ namespace DynamicBundles
         /// Path to the directory. 
         /// </param>
         /// <returns></returns>
-        private static FileListsByAssetType GetRequiredFilesForDirectoryUnchached(AssetPath dirPath)
+        private FileListsByAssetType GetRequiredFilesForDirectoryUnchached(AssetPath dirPath)
         {
             FileListsByAssetType fileListsByAssetType = new FileListsByAssetType();
 
@@ -68,19 +80,64 @@ namespace DynamicBundles
         /// </summary>
         /// <param name="fileListsByAssetType"></param>
         /// <param name="dirPath"></param>
-        private static void AddRequiredFilesSingleDirectory(FileListsByAssetType fileListsByAssetType, AssetPath dirPath)
+        private void AddRequiredFilesSingleDirectory(FileListsByAssetType fileListsByAssetType, AssetPath dirPath)
         {
             string absolutePath = dirPath.AbsolutePath;
             IEnumerable<string> filePaths = Directory.EnumerateFiles(absolutePath);
 
-            foreach(string filePath in filePaths)
+            // Need to first process the nuspec files, and then the asset files.
+            // This because the asset files may depend on the files pointed at by the nuspec files.
+            for (int i = 0; i < 2; i++)
             {
-                AssetType? assetType = AssetTypeOfFile(filePath);
-                if (assetType != null)
+                foreach (string filePath in filePaths)
                 {
-                    fileListsByAssetType.Add(dirPath.AbsolutePathToAssetPath(filePath), assetType.Value);
+                    if (i == 0)
+                    {
+                        if (NuspecFile.IsNuspecFile(filePath))
+                        {
+                            fileListsByAssetType.Append(GetDependencies(filePath, dirPath));
+                        }
+                    } 
+                    else
+                    {
+                        AssetType? assetType = AssetTypeOfFile(filePath);
+                        if (assetType != null)
+                        {
+                            fileListsByAssetType.Add(dirPath.AbsolutePathToAssetPath(filePath), assetType.Value);
+                        }
+                    }
                 }
             }
+        }
+
+        /// <summary>
+        /// Reads the dependencies in a Nuspec file. These are directories.
+        /// Accumulates the assets in those directories to in a FileListsByAssetType.
+        /// This is then returned.
+        /// 
+        /// This method calls the dependency resolver concurrently.
+        /// </summary>
+        /// <param name="absoluteNuspecPath">
+        /// Path of the nuspec file
+        /// </param>
+        /// <param name="nuspecFileDirPath">
+        /// The directory where the nuspec file is located.
+        /// </param>
+        /// <returns></returns>
+        private FileListsByAssetType GetDependencies(string absoluteNuspecPath, AssetPath nuspecFileDirPath)
+        {
+            FileListsByAssetType fileListsByAssetType = new FileListsByAssetType();
+
+            var nuspecFile = new NuspecFile(absoluteNuspecPath);
+            List<AssetPath> dependencyAssetPaths = nuspecFile.DependencyIds.Select(d => nuspecFileDirPath.Create(d)).ToList();
+
+            // Call the dependency resolver concurrently for each dependency
+            foreach (AssetPath dependencyAssetPath in dependencyAssetPaths)
+            {
+                fileListsByAssetType.Append(GetRequiredFilesForDirectory(dependencyAssetPath));
+            }
+
+            return fileListsByAssetType;
         }
 
         /// <summary>
@@ -89,7 +146,7 @@ namespace DynamicBundles
         /// </summary>
         /// <param name="extension"></param>
         /// <returns></returns>
-        private static AssetType? AssetTypeOfFile(string filePath)
+        private AssetType? AssetTypeOfFile(string filePath)
         {
             string extension = Path.GetExtension(filePath).ToLower();
 

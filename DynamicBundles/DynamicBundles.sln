@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DynamicBundles", "DynamicBu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DynamicBundles.TestWeb", "DynamicBundles.TestWeb\DynamicBundles.TestWeb.csproj", "{4A836FF7-DAB1-498B-A698-C4B99BCC6B20}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DynamicBundles.Test", "DynamicBundles.Test\DynamicBundles.Test.csproj", "{DECBC746-AEF8-4425-B7DF-92ACD738F7D0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{4A836FF7-DAB1-498B-A698-C4B99BCC6B20}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A836FF7-DAB1-498B-A698-C4B99BCC6B20}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A836FF7-DAB1-498B-A698-C4B99BCC6B20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DECBC746-AEF8-4425-B7DF-92ACD738F7D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DECBC746-AEF8-4425-B7DF-92ACD738F7D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DECBC746-AEF8-4425-B7DF-92ACD738F7D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DECBC746-AEF8-4425-B7DF-92ACD738F7D0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

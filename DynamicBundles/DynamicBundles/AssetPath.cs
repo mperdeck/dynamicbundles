@@ -18,15 +18,22 @@ namespace DynamicBundles
     {
         public string RootRelativePath { get; private set; }
 
+        private Func<string, string> _rootToAbsolutePathFunc = null;
+
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="rootRelativePath">
         /// Path to the file or directory. Must be relative to the root of the project (start with a ~).
         /// </param>
-        public AssetPath(string rootRelativePath)
+        /// <param name="rootToAbsolutePathFunc">
+        /// Lambda that takes a root relative path and returns an absolute path.
+        /// Does the same as HttpContext.Current.Server.MapPath
+        /// </param>
+        public AssetPath(string rootRelativePath, Func<string, string> rootToAbsolutePathFunc)
         {
             RootRelativePath = rootRelativePath;
+            _rootToAbsolutePathFunc = rootToAbsolutePathFunc;
         }
 
         private string _absolutePath = null;
@@ -36,7 +43,7 @@ namespace DynamicBundles
             {
                 if (_absolutePath == null)
                 {
-                    _absolutePath = HttpContext.Current.Server.MapPath(RootRelativePath);
+                    _absolutePath = _rootToAbsolutePathFunc(RootRelativePath);
                 }
 
                 return _absolutePath;
@@ -76,7 +83,33 @@ namespace DynamicBundles
         public AssetPath AbsolutePathToAssetPath(string absolutePath)
         {
             string rootRelativePath = "~" + absolutePath.Substring(AbsolutePathPrefixLength).Replace('\\', '/');
-            return new AssetPath(rootRelativePath);
+            return new AssetPath(rootRelativePath, _rootToAbsolutePathFunc);
+        }
+
+        /// <summary>
+        /// Create a new AssetPath with the same rootToAbsolutePathFunc as this AssetPath.
+        /// 
+        /// If the given path is not root relative, it is assumed to be relative to this AssetPath.
+        /// </summary>
+        public AssetPath Create(string path)
+        {
+            if (!path.StartsWith("~"))
+            {
+                return RootRelativeCombine(RootRelativePath, path);
+            }
+
+            return new AssetPath(path, _rootToAbsolutePathFunc);
+        }
+
+        private AssetPath RootRelativeCombine(string rootRelativePath, string relativePath)
+        {
+            // If relativePath contains .. (such as ..\dir), then rootRelativePathWithDots also has ..
+            // This somehow leads to an endless loop.
+            string rootRelativePathWithDots = Path.Combine(RootRelativePath, relativePath);
+
+            string absolutePath = Path.GetFullPath(_rootToAbsolutePathFunc(rootRelativePathWithDots));
+            AssetPath assetPath = AbsolutePathToAssetPath(absolutePath);
+            return assetPath;
         }
 
         /// <summary>
@@ -101,7 +134,7 @@ namespace DynamicBundles
 
             while (!currentRootRelativePath.EndsWith(stopDirectory))
             {
-                parentDirs.Add(new AssetPath(currentRootRelativePath));
+                parentDirs.Add(new AssetPath(currentRootRelativePath, _rootToAbsolutePathFunc));
                 currentRootRelativePath = Path.GetDirectoryName(currentRootRelativePath);
             }
 

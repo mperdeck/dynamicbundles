@@ -8,7 +8,12 @@ using System.Web.Caching;
 
 namespace DynamicBundles
 {
-    public class CacheHelper
+    public interface ICacheHelper
+    {
+        T Get<T>(string cacheKey, Func<T> createItem, IEnumerable<string> directories);
+    }
+
+    public class CacheHelper : ICacheHelper
     {
         private static object lockThis = new Object();
 
@@ -30,7 +35,7 @@ namespace DynamicBundles
         /// New cache item is dependend on these directories.
         /// </param>
         /// <returns></returns>
-        public static  T Get<T>(string cacheKey, Func<T> createItem, IEnumerable<string> directories)
+        public T Get<T>(string cacheKey, Func<T> createItem, IEnumerable<string> directories)
         {
             T item = (T)HttpContext.Current.Cache[cacheKey];
 

@@ -65,6 +65,11 @@ namespace DynamicBundles
 
     internal static class WebViewPageStatic
     {
+       private static DynamicBundlesBuilder _dynamicBundlesBuilder =
+           new DynamicBundlesBuilder(new DynamicBundleCollection(BundleTable.Bundles), 
+                                    new CacheHelper(),
+                                    new BundleFactories());
+
         /// <summary>
         /// Called when a view file is being processed, such as the main view file, partial views and layout views.
         /// </summary>
@@ -74,7 +79,7 @@ namespace DynamicBundles
         public static void InitializePage(string viewVirtualPath)
         {
             // Store the directory that the view file lives in
-            HttpContextStore.AddAssetDirectory(new AssetPath(Path.GetDirectoryName(viewVirtualPath)));
+            HttpContextStore.AddAssetDirectory(new AssetPath(Path.GetDirectoryName(viewVirtualPath), HttpContext.Current.Server.MapPath));
         }
 
         /// <summary>
@@ -83,14 +88,6 @@ namespace DynamicBundles
         /// </summary>
         public static void ExecutePageHierarchy()
         {
-        }
-
-        private static List<string> CreateBundles(FileListsByAssetType fileListsByAssetType, AssetType assetType, Func<string, Bundle> bundleFactory)
-        {
-            List<AssetPath> files = fileListsByAssetType.GetList(assetType);
-            List<List<AssetPath>> filesByAreaController = RouteHelper.FilePathsSortedByRoute(files);
-            List<string> bundleVirtualPaths = BundleHelper.AddFileListsAsBundles(BundleTable.Bundles, filesByAreaController, bundleFactory);
-            return bundleVirtualPaths;
         }
 
         /// <summary>
@@ -115,22 +112,14 @@ namespace DynamicBundles
             if (!HttpContextStore.FirstTime()) { return new HtmlString(""); }
 
             List<AssetPath> assetDirectoryList = HttpContextStore.GetAssetDirectories();
+            List<string> scriptBundleVirtualPaths;
+            List<string> styleBundleVirtualPaths;
 
-            var fileListsByAssetType = new FileListsByAssetType();
+            _dynamicBundlesBuilder.Builder(assetDirectoryList, out scriptBundleVirtualPaths, out styleBundleVirtualPaths);
 
-            foreach (AssetPath assetDirectory in assetDirectoryList)
-            {
-                FileListsByAssetType requiredFilesByAssetType = DependencyResolver.GetRequiredFilesForDirectory(assetDirectory);
-                fileListsByAssetType.Append(requiredFilesByAssetType);
-            }
-
-            // fileListsByAssetType now contains all required files by asset type
-
-            List<string> scriptBundleVirtualPaths = CreateBundles(fileListsByAssetType, AssetType.Script, BundleHelper.ScriptBundleFactory);
             HttpContextStore.StoreBottomBundleNames(scriptBundleVirtualPaths);
 
             // Note that Styles.Render assumes that all the bundles are StyleBundles
-            List<string> styleBundleVirtualPaths = CreateBundles(fileListsByAssetType, AssetType.StyleSheet, BundleHelper.StyleBundleFactory);
             return Styles.Render(styleBundleVirtualPaths.ToArray());
         }
 
