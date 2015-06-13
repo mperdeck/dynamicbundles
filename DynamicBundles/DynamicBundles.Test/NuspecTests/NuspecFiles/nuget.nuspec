@@ -1,0 +1,37 @@
+﻿<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <projectUrl>http://jsnlog.com</projectUrl>
+    <iconUrl>http://jsnlog.com/Nuget/icon.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <copyright>Copyright 2014</copyright>
+    <tags>JavaScript logging exceptions log4net nlog elmah</tags>
+      <dependencies>
+          <!-- IMPORTANT
+               The CommonLogging NuGet package and the JSNLog package have the same dependencies
+               and files. This because CommonLogging is purely a convenience package - JSNLog
+               already builds on Common.Logging, so it is not really needed. Only reason it is there
+               is so there is no need to explain to Common.Logging users that they can install
+               the core JSNLog.
+
+               If you change the dependencies or files in one of these nuspecs, change them
+               in the other as well. --> 
+          <dependency id="Common.Logging" />
+          <dependency id="WebActivatorEx" version="2.0.0" />
+      </dependencies>
+  </metadata>
+    <files>
+        <file src="..\..\jsnlog.js\jsnlog.js" target="content\Scripts" />
+        <file src="..\..\jsnlog.js\jsnlog.min.js" target="content\Scripts" />
+        <file src="..\..\jsnlog.js\jsnlog.js.map" target="content\Scripts" />
+        <file src="NuGet\AdditionalContent\*.*" target="content" />
+        <file src="NuGet\AdditionalAppStart\*.*" target="content\App_Start" />
+        <file src="NuGet\readme.txt" target="" />
+    </files>
+</package>

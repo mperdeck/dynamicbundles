@@ -1,0 +1,10 @@
+﻿<?xml version="1.0"?>
+<package >
+  <metadata>
+      <dependencies>
+          <!-- a comment  --> 
+        <dependency id="~/Views/Library" />
+        <dependency id="~/Packages" />
+      </dependencies>
+  </metadata>
+</package>

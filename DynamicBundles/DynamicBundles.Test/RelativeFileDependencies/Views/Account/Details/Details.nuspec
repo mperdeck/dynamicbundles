@@ -1,0 +1,8 @@
+﻿<?xml version="1.0"?>
+<package >
+  <metadata>
+      <dependencies>
+        <dependency id="../AccountDetailsAssets" />
+      </dependencies>
+  </metadata>
+</package>

@@ -1,0 +1,206 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DECBC746-AEF8-4425-B7DF-92ACD738F7D0}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DynamicBundles.Test</RootNamespace>
+    <AssemblyName>DynamicBundles.Test</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
+    <IsCodedUITest>False</IsCodedUITest>
+    <TestProjectType>UnitTest</TestProjectType>
+    <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Antlr3.Runtime">
+      <HintPath>..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.5.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Optimization">
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="WebGrease">
+      <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <Choose>
+    <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
+  <ItemGroup>
+    <Compile Include="AssetsInLayoutOnly\AssetsInLayoutOnly.cs" />
+    <Compile Include="MultipleFileDependencies\Tests.cs" />
+    <Compile Include="DependenciesInController\Tests.cs" />
+    <Compile Include="RelativeFileDependencies\Tests.cs" />
+    <Compile Include="RootRelativeFileDependencies\Tests.cs" />
+    <Compile Include="Helpers\ArrayEqualityTesters.cs" />
+    <Compile Include="Helpers\TestDynamicBundleCollection.cs" />
+    <Compile Include="Helpers\TestCacheHelper.cs" />
+    <Compile Include="NuspecTests\NuspecTests.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Helpers\Tester.cs" />
+    <Compile Include="Helpers\TestPathHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DynamicBundles\DynamicBundles.csproj">
+      <Project>{37c5ed5d-3951-4325-9191-bcd55dddd3fe}</Project>
+      <Name>DynamicBundles</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="AssetsInLayoutOnly\Views\Account\Details.cshtml" />
+    <None Include="AssetsInLayoutOnly\Views\Account\EditDetails.cshtml" />
+    <None Include="AssetsInLayoutOnly\Views\Account\Login.cshtml" />
+    <None Include="AssetsInLayoutOnly\Views\Home\Index.cshtml" />
+    <None Include="AssetsInLayoutOnly\Views\Product\Details.cshtml" />
+    <None Include="AssetsInLayoutOnly\Views\Shared\_LayoutContainer\_LayoutContainer.cshtml" />
+    <None Include="AssetsInLayoutOnly\Views\Shared\_Layout\_Layout.cshtml" />
+    <None Include="AssetsInLayoutOnly\Views\Web.config" />
+    <None Include="AssetsInLayoutOnly\Views\_ViewStart.cshtml" />
+    <None Include="MultipleFileDependencies\Views\Account\Details\Details.cshtml" />
+    <None Include="MultipleFileDependencies\Views\Account\Details\Details.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="MultipleFileDependencies\Views\Account\EditDetails\EditDetails.cshtml" />
+    <None Include="MultipleFileDependencies\Views\Account\Login.cshtml" />
+    <None Include="MultipleFileDependencies\Views\Home\Index.cshtml" />
+    <None Include="MultipleFileDependencies\Views\Product\Details.cshtml" />
+    <None Include="MultipleFileDependencies\Views\Shared\_LayoutContainer\_LayoutContainer.cshtml" />
+    <None Include="MultipleFileDependencies\Views\Shared\_Layout\_Layout.cshtml" />
+    <None Include="MultipleFileDependencies\Views\Web.config" />
+    <None Include="MultipleFileDependencies\Views\_ViewStart.cshtml" />
+    <None Include="DependenciesInController\Views\Account\Details\Details.cshtml" />
+    <None Include="DependenciesInController\Views\Account\EditDetails\EditDetails.cshtml" />
+    <None Include="DependenciesInController\Views\Account\Login.cshtml" />
+    <None Include="DependenciesInController\Views\Home\Index.cshtml" />
+    <None Include="DependenciesInController\Views\Product\Details.cshtml" />
+    <None Include="DependenciesInController\Views\Shared\_LayoutContainer\_LayoutContainer.cshtml" />
+    <None Include="DependenciesInController\Views\Shared\_Layout\_Layout.cshtml" />
+    <None Include="DependenciesInController\Views\Web.config" />
+    <None Include="DependenciesInController\Views\_ViewStart.cshtml" />
+    <None Include="RelativeFileDependencies\Views\Account\Details\Details.cshtml" />
+    <None Include="RelativeFileDependencies\Views\Account\Details\Details.nuspec" />
+    <None Include="RelativeFileDependencies\Views\Account\EditDetails\EditDetails.cshtml" />
+    <None Include="RelativeFileDependencies\Views\Account\EditDetails\EditDetails.nuspec" />
+    <None Include="RelativeFileDependencies\Views\Account\Login.cshtml" />
+    <None Include="RelativeFileDependencies\Views\Home\Index.cshtml" />
+    <None Include="RelativeFileDependencies\Views\Product\Details.cshtml" />
+    <None Include="RelativeFileDependencies\Views\Shared\_LayoutContainer\_LayoutContainer.cshtml" />
+    <None Include="RelativeFileDependencies\Views\Shared\_Layout\_Layout.cshtml" />
+    <None Include="RelativeFileDependencies\Views\Web.config" />
+    <None Include="RelativeFileDependencies\Views\_ViewStart.cshtml" />
+    <None Include="RootRelativeFileDependencies\Views\Account\Details\Details.cshtml" />
+    <None Include="RootRelativeFileDependencies\Views\Account\Details\Details.nuspec" />
+    <None Include="RootRelativeFileDependencies\Views\Account\EditDetails\EditDetails.cshtml" />
+    <None Include="RootRelativeFileDependencies\Views\Account\Login.cshtml" />
+    <None Include="RootRelativeFileDependencies\Views\Account\EditDetails\EditDetails.nuspec" />
+    <None Include="RootRelativeFileDependencies\Views\Home\Index.cshtml" />
+    <None Include="RootRelativeFileDependencies\Views\Product\Details.cshtml" />
+    <None Include="RootRelativeFileDependencies\Views\Shared\_LayoutContainer\_LayoutContainer.cshtml" />
+    <None Include="RootRelativeFileDependencies\Views\Shared\_Layout\_Layout.cshtml" />
+    <None Include="RootRelativeFileDependencies\Views\Web.config" />
+    <None Include="RootRelativeFileDependencies\Views\_ViewStart.cshtml" />
+    <None Include="NuspecTests\NuspecFiles\multipledependencies.nuspec" />
+    <None Include="NuspecTests\NuspecFiles\onedependency.nuspec" />
+    <None Include="NuspecTests\NuspecFiles\empty.nuspec" />
+    <None Include="NuspecTests\NuspecFiles\nuget.nuspec" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AssetsInLayoutOnly\Views\Shared\_LayoutContainer\jquery-1.8.2.js" />
+    <Content Include="AssetsInLayoutOnly\Views\Shared\_LayoutContainer\Reset.css" />
+    <Content Include="AssetsInLayoutOnly\Views\Shared\_LayoutContainer\SharedCode.js" />
+    <Content Include="AssetsInLayoutOnly\Views\Shared\_LayoutContainer\Site.css" />
+    <Content Include="AssetsInLayoutOnly\Views\Shared\_Layout\_Layout.css" />
+    <Content Include="MultipleFileDependencies\Views\Account\AccountDetailsAssets\AccountDetailsAssets.css" />
+    <Content Include="MultipleFileDependencies\Views\Account\AccountDetailsAssets\AccountDetailsAssets.js" />
+    <Content Include="MultipleFileDependencies\Views\Shared\DetailsAssets\DetailsAssets.css" />
+    <Content Include="MultipleFileDependencies\Views\Shared\_LayoutContainer\jquery-1.8.2.js" />
+    <Content Include="MultipleFileDependencies\Views\Shared\_LayoutContainer\Site.css" />
+    <Content Include="MultipleFileDependencies\Views\Shared\_Layout\_Layout.css" />
+    <Content Include="DependenciesInController\Views\Account\AccountDetailsAssets.css" />
+    <Content Include="DependenciesInController\Views\Account\AccountDetailsAssets.js" />
+    <Content Include="DependenciesInController\Views\Shared\_LayoutContainer\jquery-1.8.2.js" />
+    <Content Include="DependenciesInController\Views\Shared\_LayoutContainer\Site.css" />
+    <Content Include="DependenciesInController\Views\Shared\_Layout\_Layout.css" />
+    <Content Include="RelativeFileDependencies\Views\Account\AccountDetailsAssets\AccountDetailsAssets.css" />
+    <Content Include="RelativeFileDependencies\Views\Account\AccountDetailsAssets\AccountDetailsAssets.js" />
+    <Content Include="RelativeFileDependencies\Views\Shared\_LayoutContainer\jquery-1.8.2.js" />
+    <Content Include="RelativeFileDependencies\Views\Shared\_LayoutContainer\Site.css" />
+    <Content Include="RelativeFileDependencies\Views\Shared\_Layout\_Layout.css" />
+    <Content Include="RootRelativeFileDependencies\Views\Account\AccountDetailsAssets\AccountDetailsAssets.css" />
+    <Content Include="RootRelativeFileDependencies\Views\Account\AccountDetailsAssets\AccountDetailsAssets.js" />
+    <Content Include="RootRelativeFileDependencies\Views\Shared\_LayoutContainer\jquery-1.8.2.js" />
+    <Content Include="RootRelativeFileDependencies\Views\Shared\_LayoutContainer\Site.css" />
+    <Content Include="RootRelativeFileDependencies\Views\Shared\_Layout\_Layout.css" />
+  </ItemGroup>
+  <ItemGroup />
+  <Choose>
+    <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.CodedUITestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Extension, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITesting, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
